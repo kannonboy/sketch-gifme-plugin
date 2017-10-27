@@ -7,12 +7,12 @@
 			"identifier": "video",
 			"script": "./video.js",
 			"shortcut": "cmd alt j"
-		}
+    }
 	],
 	"menu": {
 		"isRoot": true,
 		"items": [
-			"video"
+      "video"
 		]
 	}
 }
