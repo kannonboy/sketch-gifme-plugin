@@ -17,5 +17,8 @@
   },
   "devDependencies": {
     "@skpm/builder": "^0.1.4"
+  },
+  "dependencies": {
+    "sketch-polyfill-setinterval": "^0.1.0"
   }
 }
