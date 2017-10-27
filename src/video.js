@@ -1,8 +1,16 @@
 import { setInterval } from 'sketch-polyfill-setinterval'
 
+const basePath = COScript.currentCOScript().env()
+   .scriptURL.path()
+   .stringByDeletingLastPathComponent()
+   .stringByDeletingLastPathComponent()
+   .stringByDeletingLastPathComponent()
+   .stringByDeletingLastPathComponent()
+   + '/examples/shuttle/'
+
 const images = []
-for (let i = 0; i < 6; i++) {
-  images.push(NSImage.alloc().initByReferencingFile('/Users/tpettersen/Desktop/' + i + '.png'))
+for (let i = 0; i < 151; i++) {
+  images.push(NSImage.alloc().initByReferencingFile(basePath + i + '.jpg'))
 }
 
 export default function (context) {
@@ -17,6 +25,6 @@ export default function (context) {
     index = (index + 1) % images.length
     fill.setImage(MSImageData.alloc().initWithImage(images[index]))
     fill.setPatternFillType(1)
-  }, 100)
+  }, 40)
 
 }
