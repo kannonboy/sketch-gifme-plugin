@@ -1,11 +1,20 @@
 import { setInterval } from 'sketch-polyfill-setinterval'
 
+const gifMeVideoKey = 'gif.me.video'
+
 export default function (context) {
-  const outputDir = loadVideo(context)
-  log(outputDir)
-  if (!outputDir) {
+
+  const videoPath = promptForVideoFile(context)
+  if (!videoPath) {
+    log('No video file selected')
     return
   }
+  const outputDir = exportFrames(videoPath)
+  if (!outputDir) {
+    log('Failed to export frames')
+    return
+  }
+  log('Exported frames to ' + outputDir)
 
   const count = NSFileManager
     .defaultManager()
@@ -32,9 +41,11 @@ export default function (context) {
     fill.setImage(MSImageData.alloc().initWithImage(images[index]))
     fill.setPatternFillType(1)
   }, 40)
+
+  storeVideoOnLayer(context, layer, videoPath)
 }
 
-function loadVideo (context) {
+function promptForVideoFile (context) {
   const openPanel = NSOpenPanel.openPanel()
   openPanel.setCanChooseFiles(true)
   openPanel.setCanChooseDirectories(false)
@@ -44,9 +55,7 @@ function loadVideo (context) {
   if (clicked == NSFileHandlingPanelOKButton) {
     const urls = openPanel.URLs()
     if (urls.count() > 0) {
-      const path = urls[0].path()
-      context.api().message(path)
-      return exportFrames(path)
+      return urls[0].path()
     }
   }
 }
@@ -102,4 +111,11 @@ function createRectangle (context, nsSize) {
   shapeGroup.style().addStylePartOfType(0)
   context.document.currentPage().addLayer(shapeGroup)
   return shapeGroup
+}
+
+function storeVideoOnLayer (context, layer, videoPath) {
+  let data = NSData.dataWithContentsOfFile(videoPath)
+  data = data.base64EncodedDataWithOptions(null)
+  data = NSString.alloc().initWithData_encoding(data, NSUTF8StringEncoding)
+  context.command.setValue_forKey_onLayer(data, gifMeVideoKey, layer)
 }
