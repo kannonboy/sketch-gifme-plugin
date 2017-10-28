@@ -2,9 +2,9 @@ import { setInterval } from 'sketch-polyfill-setinterval'
 
 const gifMeVideoDataKey = 'gif.me.video.data'
 const gifMeVideoNameKey = 'gif.me.video.name'
+const gifMePluginKey = 'gif.me.plugin'
 
 export default function (context) {
-
   const videoPath = promptForVideoFile(context)
   if (!videoPath) {
     log('No video file selected')
@@ -131,10 +131,10 @@ function storeVideoOnLayer (context, layer, videoPath) {
   let data = NSData.dataWithContentsOfFile(videoPath)
   data = data.base64EncodedDataWithOptions(null)
   data = NSString.alloc().initWithData_encoding(data, NSUTF8StringEncoding)
-  context.command.setValue_forKey_onLayer(data, gifMeVideoDataKey, layer)
+  context.command.setValue_forKey_onLayer_forPluginIdentifier(data, gifMeVideoDataKey, layer, gifMePluginKey)
   const fileName = videoPath.substring(videoPath.lastIndexOf('/') + 1)
   log('Saving video data for ' + fileName + ' on ' + layer)
-  context.command.setValue_forKey_onLayer(fileName, gifMeVideoNameKey, layer)
+  context.command.setValue_forKey_onLayer_forPluginIdentifier(fileName, gifMeVideoNameKey, layer, gifMePluginKey)
 }
 
 export function onOpenDocument (context) {
@@ -163,8 +163,8 @@ export function onOpenDocument (context) {
 
 function loadVideoForLayer (context, layer) {
   log('Checking layer ' + layer + ' for video data')
-  const fileName = context.command.valueForKey_onLayer(gifMeVideoNameKey, layer)
-  let data = context.command.valueForKey_onLayer(gifMeVideoDataKey, layer)
+  const fileName = context.command.valueForKey_onLayer_forPluginIdentifier(gifMeVideoNameKey, layer, gifMePluginKey)
+  let data = context.command.valueForKey_onLayer_forPluginIdentifier(gifMeVideoDataKey, layer, gifMePluginKey)
   if (fileName && data) {
     log('Found video: ' + fileName)
     data = NSData.alloc().initWithBase64EncodedString_options(data, null)
