@@ -3,16 +3,16 @@
   "bundleVersion": 1,
   "commands": [
 		{
-			"name": "Video",
-			"identifier": "video",
+			"name": "🖼 Gif me",
+			"identifier": "gif-me",
 			"script": "./video.js",
-			"shortcut": "cmd alt j"
+			"shortcut": "cmd shift g"
     }
 	],
 	"menu": {
 		"isRoot": true,
 		"items": [
-      "video"
+      "gif-me"
 		]
 	}
 }

@@ -1,6 +1,6 @@
 # build artifacts
-plugin.sketchplugin/Contents/Sketch
-plugin.sketchplugin/Contents/Resources/_webpack_resources
+gifme.sketchplugin/Contents/Sketch
+gifme.sketchplugin/Contents/Resources/_webpack_resources
 
 # npm
 node_modules

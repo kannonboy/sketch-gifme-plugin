@@ -1,13 +1,13 @@
 {
-  "name": "sketch-video-plugin",
+  "name": "sketch-gifme-plugin",
   "version": "0.1.0",
   "engines": {
     "sketch": ">=3.0"
   },
   "skpm": {
-    "name": "sketch-video-plugin",
+    "name": "Gif me",
     "manifest": "src/manifest.json",
-    "main": "plugin.sketchplugin"
+    "main": "gifme.sketchplugin"
   },
   "scripts": {
     "build": "skpm-build",
