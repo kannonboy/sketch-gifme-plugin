@@ -13,7 +13,7 @@ export default function (context) {
     .count()
 
   const images = []
-  for (let i = 0; i < count; i++) {
+  for (let i = 1; i <= count; i++) {
     const imagePath = outputDir + '/' + i + '.jpg'
     images.push(NSImage.alloc().initByReferencingFile(imagePath))
   }
