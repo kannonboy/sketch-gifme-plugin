@@ -18,7 +18,11 @@ export default function (context) {
     images.push(NSImage.alloc().initByReferencingFile(imagePath))
   }
 
-  const layer = context.document.selectedLayers().layers()[0]
+  const layers = context.document.selectedLayers().layers()
+  const layer = layers.count() > 0 ?
+    layers[0] :
+    createRectangle(context, images[0].size())
+
   let index = 0
 
   setInterval(function () {
@@ -80,4 +84,22 @@ function tempDir (name) {
 
 function randomInt (max) {
   return Math.floor(Math.random() * max)
+}
+
+function createRectangle (context, nsSize) {
+  const scrollOrigin = context.document.currentView().scrollOrigin()
+  const contentRect = context.document.currentView().visibleContentRect()
+  const width = nsSize.width
+  const height = nsSize.height
+  const rect = NSMakeRect(
+      contentRect.origin.x + (contentRect.size.width - width) / 2,
+      contentRect.origin.y + (contentRect.size.height - height) / 2,
+      width,
+      height
+  )
+  const shape = MSRectangleShape.alloc().initWithFrame(rect)
+  const shapeGroup = MSShapeGroup.shapeWithPath(shape);
+  shapeGroup.style().addStylePartOfType(0)
+  context.document.currentPage().addLayer(shapeGroup)
+  return shapeGroup
 }
