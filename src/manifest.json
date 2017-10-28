@@ -7,7 +7,17 @@
 			"identifier": "gif-me",
 			"script": "./video.js",
 			"shortcut": "cmd shift g"
-    }
+		},
+		{
+			"name": "onOpenDocument",
+			"identifier": "onOpenDocument",
+			"script": "./video.js",
+			"handlers": {
+				"actions": {
+					"OpenDocument": "onOpenDocument"
+				}
+			}
+		}
 	],
 	"menu": {
 		"isRoot": true,

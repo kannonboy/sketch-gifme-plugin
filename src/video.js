@@ -1,6 +1,7 @@
 import { setInterval } from 'sketch-polyfill-setinterval'
 
-const gifMeVideoKey = 'gif.me.video'
+const gifMeVideoDataKey = 'gif.me.video.data'
+const gifMeVideoNameKey = 'gif.me.video.name'
 
 export default function (context) {
 
@@ -9,6 +10,25 @@ export default function (context) {
     log('No video file selected')
     return
   }
+  insertVideo(context, videoPath)
+}
+
+function promptForVideoFile (context) {
+  const openPanel = NSOpenPanel.openPanel()
+  openPanel.setCanChooseFiles(true)
+  openPanel.setCanChooseDirectories(false)
+  openPanel.setAllowsMultipleSelection(false)
+  const clicked = openPanel.runModal()
+
+  if (clicked == NSFileHandlingPanelOKButton) {
+    const urls = openPanel.URLs()
+    if (urls.count() > 0) {
+      return urls[0].path()
+    }
+  }
+}
+
+function insertVideo (context, videoPath, layer, skipSave) {
   const outputDir = exportFrames(videoPath)
   if (!outputDir) {
     log('Failed to export frames')
@@ -27,10 +47,13 @@ export default function (context) {
     images.push(NSImage.alloc().initByReferencingFile(imagePath))
   }
 
-  const layers = context.document.selectedLayers().layers()
-  const layer = layers.count() > 0 ?
-    layers[0] :
-    createRectangle(context, images[0].size())
+  // if no layer is passed in, get the currently selected layer, or create a new one
+  if (!layer) {
+    const layers = context.document.selectedLayers().layers()
+    layer = layers.count() > 0 ?
+      layers[0] :
+      createRectangle(context, images[0].size())
+  }
 
   let index = 0
 
@@ -42,26 +65,13 @@ export default function (context) {
     fill.setPatternFillType(1)
   }, 40)
 
-  storeVideoOnLayer(context, layer, videoPath)
-}
-
-function promptForVideoFile (context) {
-  const openPanel = NSOpenPanel.openPanel()
-  openPanel.setCanChooseFiles(true)
-  openPanel.setCanChooseDirectories(false)
-  openPanel.setAllowsMultipleSelection(false)
-  const clicked = openPanel.runModal()
-
-  if (clicked == NSFileHandlingPanelOKButton) {
-    const urls = openPanel.URLs()
-    if (urls.count() > 0) {
-      return urls[0].path()
-    }
+  if (!skipSave) {
+    storeVideoOnLayer(context, layer, videoPath)
   }
 }
 
 function exportFrames (filePath) {
-  const outDir = tempDir('export' + randomInt(9999999))
+  const outDir = tempDir('frames')
 
   NSFileManager
     .defaultManager()
@@ -84,10 +94,14 @@ function exportFrames (filePath) {
 }
 
 function tempDir (name) {
-  var tmp = NSTemporaryDirectory() + 'sketch-video-plugin/'
-  if (name) {
-    tmp += name + '/'
-  }
+  name = name || ''
+  // FIXME
+  var tmp = NSTemporaryDirectory() + 'sketch-video-plugin/' + name + randomInt(9999999) + '/'
+  NSFileManager
+    .defaultManager()
+    .createDirectoryAtPath_withIntermediateDirectories_attributes_error(
+      tmp, true, null, null
+    )
   return tmp
 }
 
@@ -117,5 +131,45 @@ function storeVideoOnLayer (context, layer, videoPath) {
   let data = NSData.dataWithContentsOfFile(videoPath)
   data = data.base64EncodedDataWithOptions(null)
   data = NSString.alloc().initWithData_encoding(data, NSUTF8StringEncoding)
-  context.command.setValue_forKey_onLayer(data, gifMeVideoKey, layer)
+  context.command.setValue_forKey_onLayer(data, gifMeVideoDataKey, layer)
+  const fileName = videoPath.substring(videoPath.lastIndexOf('/') + 1)
+  log('Saving video data for ' + fileName + ' on ' + layer)
+  context.command.setValue_forKey_onLayer(fileName, gifMeVideoNameKey, layer)
+}
+
+export function onOpenDocument (context) {
+  // FIXME: For some reason, the child layers are not present when
+  // OpenDocument is triggered. So let's wait an arbitrary amount
+  // of time before checking for videos.
+  // FIXME: note we can't use setTimeout here, or clear the interval, because
+  // it kills to COScript after running, which stops the animation.
+  let done = false
+  setInterval(function () {
+    if (!done) {
+      const document = context.document || context.actionContext.document
+      if (document) {
+        const pages = document.pages()
+        for (let i = 0; i < pages.count(); i++) {
+          const children = pages[i].children()
+          for (let j = 0; j < children.count(); j++) {
+            loadVideoForLayer(context, children[j])
+          }
+        }
+      }
+      done = true
+    }
+  }, 1000)
+}
+
+function loadVideoForLayer (context, layer) {
+  log('Checking layer ' + layer + ' for video data')
+  const fileName = context.command.valueForKey_onLayer(gifMeVideoNameKey, layer)
+  let data = context.command.valueForKey_onLayer(gifMeVideoDataKey, layer)
+  if (fileName && data) {
+    log('Found video: ' + fileName)
+    data = NSData.alloc().initWithBase64EncodedString_options(data, null)
+    const videoPath = tempDir('video') + fileName
+    data.writeToFile_atomically(videoPath, false)
+    insertVideo(context, videoPath, layer, true)
+  }
 }
