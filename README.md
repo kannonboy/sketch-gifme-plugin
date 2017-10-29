@@ -2,6 +2,8 @@
 
 Embed gifs and videos in your Sketch files!
 
+![Animated cat in Sketch file](https://github.com/kannonboy/sketch-gifme-plugin/raw/master/kitty.gif "Disruptive kitty")
+
 ## Installation
 
 1. Open `Terminal`
