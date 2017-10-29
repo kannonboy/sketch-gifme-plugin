@@ -2,7 +2,7 @@
 
 Embed gifs and videos in your Sketch files!
 
-![Animated cat in Sketch file](https://github.com/kannonboy/sketch-gifme-plugin/raw/master/kitty.gif "Disruptive kitty")
+![Animated cat in Sketch file](https://github.com/kannonboy/sketch-gifme-plugin/raw/master/kitty.gif "Disruptive synergistic kitty")
 
 ## Installation
 
