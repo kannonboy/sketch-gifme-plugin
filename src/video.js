@@ -162,11 +162,10 @@ export function onOpenDocument (context) {
 }
 
 function loadVideoForLayer (context, layer) {
-  log('Checking layer ' + layer + ' for video data')
   const fileName = context.command.valueForKey_onLayer_forPluginIdentifier(gifMeVideoNameKey, layer, gifMePluginKey)
   let data = context.command.valueForKey_onLayer_forPluginIdentifier(gifMeVideoDataKey, layer, gifMePluginKey)
   if (fileName && data) {
-    log('Found video: ' + fileName)
+    log('Found video ' + fileName + ' on layer ' + layer)
     data = NSData.alloc().initWithBase64EncodedString_options(data, null)
     const videoPath = tempDir('video') + fileName
     data.writeToFile_atomically(videoPath, false)
