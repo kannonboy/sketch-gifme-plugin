@@ -1,6 +1,6 @@
 {
   "name": "sketch-gifme-plugin",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "engines": {
     "sketch": ">=3.0"
   },
