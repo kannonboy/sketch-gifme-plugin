@@ -4,6 +4,35 @@ const gifMeVideoDataKey = 'gif.me.video.data'
 const gifMeVideoNameKey = 'gif.me.video.name'
 const gifMePluginKey = 'gif.me.plugin'
 
+const videoLayers = []
+let animateLoopStarted = false
+
+/**
+ * @param {MSLayer} layer
+ * @param [{NSImage}] frames
+ */
+function startVideoLayer (layer, frames) {
+  videoLayers.push({
+    layer: layer,
+    frames: frames,
+    index: 0
+  })
+  if (!animateLoopStarted) {
+    log('starting video loop')
+    setInterval(function () {
+      for (let i = 0; i < videoLayers.length; i++) {
+        var vl = videoLayers[i]
+        var fill = vl.layer.style().fills().firstObject()
+        fill.setFillType(4)
+        vl.index = (vl.index + 1) % vl.frames.length
+        fill.setImage(MSImageData.alloc().initWithImage(vl.frames[vl.index]))
+        fill.setPatternFillType(1)
+      }
+    }, 40)
+    animateLoopStarted = true
+  }
+}
+
 export default function (context) {
   const videoPath = promptForVideoFile(context)
   if (!videoPath) {
@@ -41,10 +70,10 @@ function insertVideo (context, videoPath, layer, skipSave) {
     .contentsOfDirectoryAtPath_error(outputDir, null)
     .count()
 
-  const images = []
+  const frames = []
   for (let i = 1; i <= count; i++) {
-    const imagePath = outputDir + '/' + i + '.jpg'
-    images.push(NSImage.alloc().initByReferencingFile(imagePath))
+    const framePath = outputDir + '/' + i + '.jpg'
+    frames.push(NSImage.alloc().initByReferencingFile(framePath))
   }
 
   // if no layer is passed in, get the currently selected layer, or create a new one
@@ -52,18 +81,10 @@ function insertVideo (context, videoPath, layer, skipSave) {
     const layers = context.document.selectedLayers().layers()
     layer = layers.count() > 0 ?
       layers[0] :
-      createRectangle(context, images[0].size())
+      createRectangle(context, frames[0].size())
   }
 
-  let index = 0
-
-  setInterval(function () {
-    const fill = layer.style().fills().firstObject()
-    fill.setFillType(4)
-    index = (index + 1) % images.length
-    fill.setImage(MSImageData.alloc().initWithImage(images[index]))
-    fill.setPatternFillType(1)
-  }, 40)
+  startVideoLayer(layer, frames)
 
   if (!skipSave) {
     storeVideoOnLayer(context, layer, videoPath)
