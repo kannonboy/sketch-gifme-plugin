@@ -12,8 +12,12 @@ let animateLoopStarted = false
  * @param [{NSImage}] frames
  */
 function startVideoLayer (layer, frames) {
+  const fill = layer.style().fills().firstObject()
+  fill.setFillType(4)
+  fill.setPatternFillType(1)
   videoLayers.push({
     layer: layer,
+    fill: fill,
     frames: frames,
     index: 0
   })
@@ -22,11 +26,8 @@ function startVideoLayer (layer, frames) {
     setInterval(function () {
       for (let i = 0; i < videoLayers.length; i++) {
         var vl = videoLayers[i]
-        var fill = vl.layer.style().fills().firstObject()
-        fill.setFillType(4)
         vl.index = (vl.index + 1) % vl.frames.length
-        fill.setImage(MSImageData.alloc().initWithImage(vl.frames[vl.index]))
-        fill.setPatternFillType(1)
+        vl.fill.setImage(vl.frames[vl.index])
       }
     }, 40)
     animateLoopStarted = true
@@ -73,7 +74,8 @@ function insertVideo (context, videoPath, layer, skipSave) {
   const frames = []
   for (let i = 1; i <= count; i++) {
     const framePath = outputDir + '/' + i + '.jpg'
-    frames.push(NSImage.alloc().initByReferencingFile(framePath))
+    const nsImage = NSImage.alloc().initByReferencingFile(framePath)
+    frames.push(MSImageData.alloc().initWithImage(nsImage))
   }
 
   // if no layer is passed in, get the currently selected layer, or create a new one
@@ -81,7 +83,7 @@ function insertVideo (context, videoPath, layer, skipSave) {
     const layers = context.document.selectedLayers().layers()
     layer = layers.count() > 0 ?
       layers[0] :
-      createRectangle(context, frames[0].size())
+      createRectangle(context, frames[0].image().size())
   }
 
   startVideoLayer(layer, frames)
