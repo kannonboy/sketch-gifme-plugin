@@ -1,4 +1,6 @@
-# gif.me for Sketch
+![gif.me logo](https://github.com/kannonboy/sketch-gifme-plugin/raw/master/gifme-logo.png "gif.me logo")
+
+# Gif.me for Sketch
 
 Embed gifs and videos in your Sketch files!
 
@@ -11,6 +13,12 @@ Embed gifs and videos in your Sketch files!
 3. Run `brew install ffmpeg`
 4. Download and install the [latest plugin release](https://github.com/kannonboy/sketch-gifme-plugin/releases)
 5. Select **Gif me** from the **Plugins** menu
+
+## Usage
+1. Select an existing shape (if you'd like it filled with the gif or video. If you just want the gif dropped into your file then no need to select anything!)
+2. Run `Plugins › 🖼 Gif me`
+3. Select the gif or video you want to add (Gif.me supports all video formats that are [supported by ffmpeg](https://en.wikipedia.org/wiki/FFmpeg#Supported_codecs_and_formats).
+4. That's it! Have fun overloading your files with cat gifs, and hopefully easing the pain of designing for accessibilty when gifs and video are involved. 
 
 ## More info
 
@@ -35,3 +43,8 @@ It turns out Sketch is really fast at drawing image fills. When you import a vid
 You can also apply the video to an existing layer by selecting it before clicking **Gif me**. For example, you can convert text to vectors (CMD+SHIFT+O) and then add a gif to it for text with an animated texture effect.
 
 ![The text gif.me with an animated fire texture](https://github.com/kannonboy/sketch-gifme-plugin/raw/master/textfire.gif "gif.me = 🔥")
+
+**Using gif.me with Abstract?**
+
+Since gif.me works by rapidly updating the layer fill, using gif.me in combination with a version control plugin or application such as Abstract, means that Abstract interprets those fill updates as file changes. Which results in a seemingly endless stream of commits despite not making any real visual changes to your file. While this isn't a bug, just know this is why you keep getting those `Preview & Commit` messages even if you're not making any visual changes.
+
