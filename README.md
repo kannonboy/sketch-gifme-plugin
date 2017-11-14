@@ -1,4 +1,4 @@
-![gif.me logo](https://github.com/kannonboy/sketch-gifme-plugin/raw/master/gifme-logo.png "gif.me logo")
+![gif.me logo](https://github.com/eliasjulian/sketch-gifme-plugin/blob/master/gifme-logo.png "gif.me logo")
 
 # Gif.me for Sketch
 
