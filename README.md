@@ -18,7 +18,7 @@ Embed gifs and videos in your Sketch files!
 1. Select an existing shape (if you'd like it filled with the gif or video. If you just want the gif dropped into your file then no need to select anything!)
 2. Run `Plugins › 🖼 Gif me`
 3. Select the gif or video you want to add (Gif.me supports all video formats that are [supported by ffmpeg](https://en.wikipedia.org/wiki/FFmpeg#Supported_codecs_and_formats).
-4. That's it! Have fun overloading your files with cat gifs, and hopefully easing the pain of designing for accessibilty when gifs and video are involved. 
+4. That's it! Have fun overloading your files with cat gifs, and hopefully easing the pain of designing for accessibility when gifs and video are involved. 
 
 ## More info
 
