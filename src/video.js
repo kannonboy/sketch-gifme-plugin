@@ -12,7 +12,10 @@ let animateLoopStarted = false
  * @param [{NSImage}] frames
  */
 function startVideoLayer (layer, frames) {
-  const fill = layer.style().fills().firstObject()
+  let fill = layer.style().fills().firstObject()
+  if (!fill) {
+    fill = layer.style().addStylePartOfType(0)
+  }
   fill.setFillType(4)
   fill.setPatternFillType(1)
   videoLayers.push({
